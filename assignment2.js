@@ -138,7 +138,6 @@ export class Assignment2 extends Base_Scene {
                                         .times(Mat4.rotation(angle,x:0, y:0, z:1))
                                         .times(Mat4.translation(x:-1, y:1, z:0));
         //we want to use rotation and rotate around bottom edge of second cube (1, 1, 0)
-
         return model_transform;
     }
 
