@@ -29,12 +29,6 @@ class Cube_Outline extends Shape {
         // When a set of lines is used in graphics, you should think of the list entries as
         // broken down into pairs; each pair of vertices will be drawn as a line segment.
         // Note: since the outline is rendered with Basic_shader, you need to redefine the position and color of each vertex
-        this.arrays.position = Vector3.cast(
-            [-1,1,1], [-1,1,-1],[1,1,1], [1,1,-1], [1,-1,1], [1,-1,-1], [-1,-1,1], [-1, -1, -1],
-                    [-1,1,1], [-1,-1,1], [1,1,1], [1,-1,1], [1,1,-1], [1,-1,-1], [-1,1,-1], [-1,-1,-1],
-                    [-1,1,1], [1,1,1], [-1,-1,1], [1,-1,1], [-1,-1,-1], [1,-1,-1], [-1,1,-1], [1,1,-1]);
-        this.arrays.color = Array(24).fill(0).map(x=> color(1,1,1,1);
-        this.indexed = false;
     }
 }
 
@@ -61,9 +55,6 @@ class Base_Scene extends Scene {
             'outline': new Cube_Outline(),
         };
 
-
-        this.set_colors(); //added by TA
-
         // *** Materials
         this.materials = {
             plastic: new Material(new defs.Phong_Shader(),
@@ -89,7 +80,6 @@ class Base_Scene extends Scene {
         // *** Lights: *** Values of vector or point lights.
         const light_position = vec4(0, 5, 5, 1);
         program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 1000)];
-
     }
 }
 
@@ -102,8 +92,6 @@ export class Assignment2 extends Base_Scene {
      */
     set_colors() {
         // TODO:  Create a class member variable to store your cube's colors.
-        this.colors = Array(8).fill(0).map(x=> color(Math.random(), Math.random(), Math.random()), 1);
-        //set array of 8 random colors: fill it with zero then for each value, set random color
     }
 
     make_control_panel() {
@@ -112,48 +100,26 @@ export class Assignment2 extends Base_Scene {
         // Add a button for controlling the scene.
         this.key_triggered_button("Outline", ["o"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
-            this.OUTLINE ^= true;
         });
         this.key_triggered_button("Sit still", ["m"], () => {
             // TODO:  Requirement 3d:  Set a flag here that will toggle your swaying motion on and off.
-            //WITH TA
-            this.STILL ^= true; //gives a flag that toggles every time it is triggered
         });
     }
 
-    draw_box(context, program_state, model_transform) { //need to add i parameter
-        const blue = hex_color("#1a9ffa"); //wont need this line
+    draw_box(context, program_state, model_transform) {
         // TODO:  Helper function for requirement 3 (see hint).
         //        This should make changes to the model_transform matrix, draw the next box, and return the newest model_transform.
-        const t = program_state.animation_time/1000; //millisecs
-        const hertz = 3; //how many times we want it to swing per second
-        let angle = -0.04/2*Math.PI*(Math.sin(2*Math.PI*hertz*t)) - 0.4*Math.PI; //w? .04 needs to be half bc there is a 2 in the variable
-        if(this.STILL) //implement m command
-            angle = -0.04*Math.PI;
 
-        if(this.OUTLINE)
-            this.shapes.outline.draw(context, program_state, model_transform, this.white, "LINES");
-
-        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.colors[i]}));
-        model_transform = model_transform.times(Mat4.translation(x:1, y:1, z:0))
-                                        .times(Mat4.rotation(angle,x:0, y:0, z:1))
-                                        .times(Mat4.translation(x:-1, y:1, z:0));
-        //we want to use rotation and rotate around bottom edge of second cube (1, 1, 0)
         return model_transform;
     }
 
     display(context, program_state) {
         super.display(context, program_state);
-        //const blue = hex_color("#1a9ffa"); moved to draw_box functipn
-        let model_transform = Mat4.identity(); //origin
+        const blue = hex_color("#1a9ffa");
+        let model_transform = Mat4.identity();
 
         // Example for drawing a cube, you can remove this line if needed
         this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
-        //second box: move origin, copy draw command
-        model_transform = model_transform.times(Mat4.translation(x:0, y:2, Z:0));
-        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
         // TODO:  Draw your entire scene here.  Use this.draw_box( graphics_state, model_transform ) to call your helper.
-        for(let i = 0; i < 8; i++)
-            model_transform = this.draw_box(context, program_state, model_transform);
     }
 }
