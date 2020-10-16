@@ -103,23 +103,46 @@ export class Assignment2 extends Base_Scene {
         });
         this.key_triggered_button("Sit still", ["m"], () => {
             // TODO:  Requirement 3d:  Set a flag here that will toggle your swaying motion on and off.
+            this.STILL^= true; //lets the STILL button toggle on and off
         });
     }
 
     draw_box(context, program_state, model_transform) {
         // TODO:  Helper function for requirement 3 (see hint).
         //        This should make changes to the model_transform matrix, draw the next box, and return the newest model_transform.
+        const blue = hex_color("#1a9ffa");
+
+        //rotation angle
+        const t = program_state.animation_time/1000;
+        const hertz = 3; //the number of times we want it to sway per sec
+        let angle = -.04/2*Math.PI*(Math.sin(2*Math.PI*hertz*t) + 1);
+
+        //m command
+        if(this.STILL)
+            angle = -0.04*Math.PI;
+
+        //draw cube and move frame up by 2
+        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
+        //translate the origin to (1, 1, 0) which is the upper right edge
+        //rotate the cube by the angle around z axis
+        //translate the origin up
+        model_transform = model_transform.times(Mat4.translation(1,1,0))
+                                        .times(Mat4.rotation(angle, 0, 0, 1))
+                                        .times(Mat4.translation(-1, 1, 0));
 
         return model_transform;
     }
 
     display(context, program_state) {
         super.display(context, program_state);
-        const blue = hex_color("#1a9ffa");
+
         let model_transform = Mat4.identity();
 
         // Example for drawing a cube, you can remove this line if needed
-        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
         // TODO:  Draw your entire scene here.  Use this.draw_box( graphics_state, model_transform ) to call your helper.
+         //create loop to draw 8 cubes using helper function above
+        for(let i = 0; i < 8; i++){
+            model_transform = this.draw_box(context, program_state, model_transform);
+        }
     }
 }
