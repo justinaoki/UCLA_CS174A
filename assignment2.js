@@ -54,6 +54,8 @@ class Base_Scene extends Scene {
             'cube': new Cube(),
             'outline': new Cube_Outline(),
         };
+        //colors array
+        this.set_colors();
 
         // *** Materials
         this.materials = {
@@ -92,6 +94,7 @@ export class Assignment2 extends Base_Scene {
      */
     set_colors() {
         // TODO:  Create a class member variable to store your cube's colors.
+        this.colors = Array(8).fill(0).map(x => color(Math.random(), Math.random(), Math.random(), 1));
     }
 
     make_control_panel() {
@@ -106,8 +109,8 @@ export class Assignment2 extends Base_Scene {
             this.STILL^= true; //lets the STILL button toggle on and off
         });
     }
-
-    draw_box(context, program_state, model_transform) {
+    //added i parameter in order to access specific color for individual cube
+    draw_box(context, program_state, model_transform, i) {
         // TODO:  Helper function for requirement 3 (see hint).
         //        This should make changes to the model_transform matrix, draw the next box, and return the newest model_transform.
         const blue = hex_color("#1a9ffa");
@@ -122,7 +125,7 @@ export class Assignment2 extends Base_Scene {
             angle = -0.04*Math.PI;
 
         //draw cube and move frame up by 2
-        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:blue}));
+        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.colors[i]}));
         //translate the origin to (1, 1, 0) which is the upper right edge
         //rotate the cube by the angle around z axis
         //translate the origin up
@@ -142,7 +145,7 @@ export class Assignment2 extends Base_Scene {
         // TODO:  Draw your entire scene here.  Use this.draw_box( graphics_state, model_transform ) to call your helper.
          //create loop to draw 8 cubes using helper function above
         for(let i = 0; i < 8; i++){
-            model_transform = this.draw_box(context, program_state, model_transform);
+            model_transform = this.draw_box(context, program_state, model_transform, i);
         }
     }
 }
