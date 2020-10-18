@@ -29,6 +29,19 @@ class Cube_Outline extends Shape {
         // When a set of lines is used in graphics, you should think of the list entries as
         // broken down into pairs; each pair of vertices will be drawn as a line segment.
         // Note: since the outline is rendered with Basic_shader, you need to redefine the position and color of each vertex
+
+        //12 pairs = 24 points.
+        this.arrays.position = Vector3.cast(
+            [-1,1,1], [-1,1,-1],[1,1,1], [1,1,-1], [1,-1,1], [1,-1,-1], [-1,-1,1], [-1, -1, -1], //z-axis
+            [-1,1,1], [-1,-1,1], [1,1,1], [1,-1,1], [1,1,-1], [1,-1,-1], [-1,1,-1], [-1,-1,-1], //y-axis
+            [-1,1,1], [1,1,1], [-1,-1,1], [1,-1,1], [-1,-1,-1], [1,-1,-1], [-1,1,-1], [1,1,-1]); //x-axis
+
+        //color replaces normal, set them similarly to original
+        //1,1,1,1 used for all white
+        this.arrays.color = Array(24).fill(0).map(x=> color(1,1,1,1));
+
+        // Arrange the vertices into a square shape in texture space too:
+        this.indexed = false;
     }
 }
 
@@ -103,6 +116,7 @@ export class Assignment2 extends Base_Scene {
         // Add a button for controlling the scene.
         this.key_triggered_button("Outline", ["o"], () => {
             // TODO:  Requirement 5b:  Set a flag here that will toggle your outline on and off
+            this.OUTLINE ^= true; //lets the OUTLINE button toggle on and off
         });
         this.key_triggered_button("Sit still", ["m"], () => {
             // TODO:  Requirement 3d:  Set a flag here that will toggle your swaying motion on and off.
@@ -116,16 +130,20 @@ export class Assignment2 extends Base_Scene {
         const blue = hex_color("#1a9ffa");
 
         //rotation angle
-        const t = program_state.animation_time/1000;
+        const t = program_state.animation_time / 1000;
         const hertz = 3; //the number of times we want it to sway per sec
-        let angle = -.04/2*Math.PI*(Math.sin(2*Math.PI*hertz*t) + 1);
+        let angle = -.04 / 2 * Math.PI * (Math.sin(2 * Math.PI * hertz * t) + 1);
 
         //m command
-        if(this.STILL)
-            angle = -0.04*Math.PI;
-
+        if (this.STILL)
+            angle = -0.04 * Math.PI;
+        //draw outline: using this.white for material and "LINES"
+        if (this.OUTLINE)
+            this.shapes.outline.draw(context, program_state, model_transform, this.white, "LINES");
         //draw cube and move frame up by 2
-        this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color:this.colors[i]}));
+        else
+            this.shapes.cube.draw(context, program_state, model_transform, this.materials.plastic.override({color: this.colors[i]}));
+
         //translate the origin to (1, 1, 0) which is the upper right edge
         //rotate the cube by the angle around z axis
         //translate the origin up
