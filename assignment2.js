@@ -126,8 +126,7 @@ export class Assignment2 extends Base_Scene {
     //added i parameter in order to access specific color for individual cube
     draw_box(context, program_state, model_transform, i) {
         // TODO:  Helper function for requirement 3 (see hint).
-        //        This should make changes to the model_transform matrix, draw the next box, and return the newest model_transform.
-        const blue = hex_color("#1a9ffa");
+        //        This should make changes to the model_transform matrix, draw the next box, and return the newest model_transform
 
         //rotation angle
         const t = program_state.animation_time / 1000;
@@ -147,9 +146,11 @@ export class Assignment2 extends Base_Scene {
         //translate the origin to (1, 1, 0) which is the upper right edge
         //rotate the cube by the angle around z axis
         //translate the origin up
-        model_transform = model_transform.times(Mat4.translation(1,1,0))
+        model_transform = model_transform.times(Mat4.scale(1,(1/1.5),1))
+                                        .times(Mat4.translation(1,1.5,0))
                                         .times(Mat4.rotation(angle, 0, 0, 1))
-                                        .times(Mat4.translation(-1, 1, 0));
+                                        .times(Mat4.translation(-1, 1.5, 0))
+                                        .times(Mat4.scale(1,1.5,1));
 
         return model_transform;
     }
@@ -162,6 +163,8 @@ export class Assignment2 extends Base_Scene {
         // Example for drawing a cube, you can remove this line if needed
         // TODO:  Draw your entire scene here.  Use this.draw_box( graphics_state, model_transform ) to call your helper.
          //create loop to draw 8 cubes using helper function above
+        //need to scale model_transform before drawing first cube
+        model_transform = model_transform.times(Mat4.scale(1,1.5,1));
         for(let i = 0; i < 8; i++){
             model_transform = this.draw_box(context, program_state, model_transform, i);
         }
